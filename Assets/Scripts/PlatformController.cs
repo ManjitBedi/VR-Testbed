@@ -4,18 +4,25 @@ using UnityEngine;
 
 public class PlatformController : MonoBehaviour
 {
-    // movement target
-    public Transform target;
+    // destination / target
+    public Transform[] targets;
 
     // speed
     public float speed = 1;
 
     bool isMoving = false;
 
+    // next destination
+    int nextIndex;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+      // set the player to the first target
+      transform.position = targets[0].position;
+
+      // next destination index is 1
+      nextIndex = 1;
     }
 
     // Update is called once per frame
@@ -45,7 +52,7 @@ public class PlatformController : MonoBehaviour
         }
 
                 // calculate the distance from out target
-        float distance = Vector3.Distance(transform.position, target.position);
+        float distance = Vector3.Distance(transform.position, targets[nextIndex].position);
 
         // have we arrived?
         if (distance > 0) 
@@ -54,7 +61,17 @@ public class PlatformController : MonoBehaviour
             float step = speed * Time.deltaTime;
 
             // move by the step
-            transform.position = Vector3.MoveTowards(transform.position, target.position, step);
+            transform.position = Vector3.MoveTowards(transform.position, targets[nextIndex].position, step);
+        } else {
+            // if we have arrived, we should update nextIndex
+            nextIndex++;
+
+            if (nextIndex == targets.Length) 
+            {
+                nextIndex = 0;
+            }
+
+            isMoving = false;
         }
     }
 }
